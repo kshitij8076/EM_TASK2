@@ -1,0 +1,30 @@
+[
+  {
+    "ok": true,
+    "topic": "explain me projectile motion using cricket",
+    "slide_id": 1,
+    "slide_name": "Definition of Projectile Motion",
+    "workdir": "C:\\Users\\kshit\\Downloads\\Extramarks\\task2\\extramarks\\viz_outputs_temp\\explain_me_projectile_motion_using_cricket\\01_Definition_of_Projectile_Motion",
+    "language": "python",
+    "filename": "projectile_motion_cricket.py",
+    "run_exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "saved_artifacts": [
+      "cricket_projectile_motion.png",
+      "projectile_motion_cricket.png"
+    ],
+    "model_json": {
+      "language": "python",
+      "filename": "projectile_motion_cricket.py",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n# Parameters\ng = 9.81            # gravitational acceleration (m/s^2)\nv0 = 30.0           # initial speed (m/s), typical strong throw\ny0 = 1.5            # release height ~ shoulder height (m)\nangles_deg = [20, 35, 50]  # different launch angles (degrees)\ncolors = [\"#1f77b4\", \"#ff7f0e\", \"#2ca02c\"]\n\n# Wicket placement (for context)\nwicket_x = 60.0     # distance to stumps (m)\nwicket_height = 0.71\nstump_spacing = 0.1  # spacing between stump centers (m)\n\n\ndef trajectory(v0, theta_deg, y0, g=9.81, n=400):\n    theta = np.deg2rad(theta_deg)\n    vx0 = v0 * np.cos(theta)\n    vy0 = v0 * np.sin(theta)\n    t_f = (vy0 + np.sqrt(vy0**2 + 2 * g * y0)) / g\n    t = np.linspace(0.0, t_f, n)\n    x = vx0 * t\n    y = y0 + vy0 * t - 0.5 * g * t**2\n    return x, y, t_f\n\n# Compute trajectories\ntrajectories = []\nmax_range = 0.0\nfor ang in angles_deg:\n    x, y, tf = trajectory(v0, ang, y0, g)\n    trajectories.append((ang, x, y))\n    max_range = max(max_range, x[-1])\n\n# Figure setup\nplt.rcParams.update({\n    \"font.size\": 12,\n    \"axes.titlesize\": 15,\n    \"axes.labelsize\": 13,\n    \"legend.fontsize\": 11\n})\n\nfig, ax = plt.subplots(figsize=(11, 6))\n\n# Ground\nax.axhline(0, color=\"#4d7c0f\", lw=2, alpha=0.8)\nax.axhspan(-0.8, 0, color=\"#c7e9c0\", alpha=0.6)\n\n# Plot trajectories\nfor (ang, x, y), c in zip(trajectories, colors):\n    ax.plot(x, y, color=c, lw=2.5, label=f\"{ang}°\")\n\n# Highlight sample ball positions on the 35° trajectory\nmid_idx = [i for i, (ang, _, _) in enumerate(trajectories) if ang == 35][0]\n_, x_mid, y_mid = trajectories[mid_idx]\nsel = np.linspace(0, len(x_mid) - 1, 8, dtype=int)\nax.scatter(x_mid[sel], y_mid[sel], s=30, facecolor=\"white\", edgecolor=\"#ff7f0e\", zorder=5, label=\"ball positions (35°)\")\n\n# Wickets (stumps and bails)\nfor dx in [-stump_spacing, 0.0, stump_spacing]:\n    ax.plot([wicket_x + dx, wicket_x + dx], [0, wicket_height], color=\"#8b5a2b\", lw=5, solid_capstyle='butt', zorder=3)\n# Bails across top of stumps\nax.plot([wicket_x - stump_spacing, wicket_x + stump_spacing], [wicket_height, wicket_height], color=\"#8b5a2b\", lw=3, zorder=3)\nax.text(wicket_x, wicket_height + 0.4, \"Wickets\", ha=\"center\", va=\"bottom\", color=\"#8b5a2b\")\n\n# Release point\nax.scatter([0], [y0], s=60, color=\"black\", zorder=6)\nax.annotate(\"Release: projectile motion begins\", xy=(0, y0), xytext=(15, y0 + 8),\n            arrowprops=dict(arrowstyle=\"->\", lw=1.8, color=\"black\"), ha=\"left\", va=\"center\")\n\n# Gravity arrow and annotation\nax.annotate(\"Gravity g acts downward\", xy=(0.92, 0.9), xycoords='axes fraction', xytext=(0.92, 0.9),\n            textcoords='axes fraction', ha='right', va='center')\nax.annotate(\"\", xy=(0.92, 0.78), xytext=(0.92, 0.9), xycoords='axes fraction',\n            arrowprops=dict(arrowstyle='-|>', lw=2, color='gray'))\n\n# Conceptual note\nax.text(0.55, 0.2, \"After release: motion shaped only by gravity\\n(Ignoring air resistance)\", transform=ax.transAxes,\n        bbox=dict(boxstyle='round,pad=0.3', fc='white', ec='gray', alpha=0.9))\n\n# Labels, legend, limits\nax.set_title(\"Projectile Motion in Cricket: Curved flight of a thrown ball\")\nax.set_xlabel(\"Horizontal distance x (m)\")\nax.set_ylabel(\"Height y (m)\")\n\nxmax = max(max_range * 1.05, wicket_x + 8)\nax.set_xlim(0, xmax)\nax.set_ylim(0, 30)\n\n# Legend (combine angle lines and ball positions)\nhandles, labels = ax.get_legend_handles_labels()\n# Ensure angle legend groups nicely\nax.legend(handles, [f\"Launch angle: {lab}\" if lab.endswith(\"°\") else lab for lab in labels],\n          title=\"Same speed, different launch angles\", loc=\"upper left\", framealpha=0.95)\n\nax.grid(True, ls='--', alpha=0.3)\n\nplt.tight_layout()\nfig.savefig(\"projectile_motion_cricket.png\", dpi=300, bbox_inches='tight')\nplt.close(fig)\n",
+      "run_instructions": "Run: python projectile_motion_cricket.py. This will save 'projectile_motion_cricket.png' in the working directory.",
+      "python_packages": [
+        "numpy",
+        "matplotlib"
+      ],
+      "r_packages": [],
+      "latex_requires": []
+    }
+  }
+]
